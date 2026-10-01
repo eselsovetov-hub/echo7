@@ -54,13 +54,13 @@ export default function TerminalPage() {
     setOutput('');
 
     try {
-      // Override input() and capture stdout
+      // Reset and capture stdout
       pyodideRef.current.runPython(`
 import sys
 from io import StringIO
-_stdout = StringIO()
-sys.stdout = _stdout
-sys.stderr = _stdout
+_stdout_capture = StringIO()
+sys.stdout = _stdout_capture
+sys.stderr = _stdout_capture
       `);
 
       // Replace input with prompt
@@ -68,7 +68,7 @@ sys.stderr = _stdout
 
       const result = await pyodideRef.current.runPythonAsync(code);
       
-      let stdout = pyodideRef.current.runPython('_stdout.getvalue()');
+      let stdout = pyodideRef.current.runPython('_stdout_capture.getvalue()');
       
       if (!stdout && result !== undefined && result !== null) {
         stdout = String(result);
